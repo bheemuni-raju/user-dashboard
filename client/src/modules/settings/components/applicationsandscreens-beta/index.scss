@@ -1,0 +1,61 @@
+.btn-group{
+  top: 90px;
+}
+
+.btn-search{
+  margin-top: 25px;
+}
+
+.module-box{
+  margin: 10px;
+}
+
+.module-box-all-checkbox {
+  display: inline !important;
+}
+
+.module-title{
+  display: inline;
+  margin-right: 10px;
+}
+
+.module-expand-colapse-btn {
+  float: right;
+  margin-right: 10px;
+  color: #27bdd8 !important;
+  cursor: pointer !important;
+}
+
+.content {
+  min-height: 0px !important;
+}
+
+.row-with-top-margin {
+  margin-top: 20px;
+}
+
+.checkbox{
+  position: relative;
+  display: inline !important;
+}
+
+.checkbox label {
+  min-height: 20px;
+  padding-left: 20px;
+  margin-bottom: 0;
+  font-weight: 400;
+  cursor: pointer;
+  padding-right: 3vh;
+}
+
+.permission-module-form .form-control {
+  text-transform: uppercase;
+}
+
+.permission-module-form .card{
+  padding:2%;
+}
+
+textarea.form-control {
+  height: 90%;
+}

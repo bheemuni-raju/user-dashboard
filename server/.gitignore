@@ -1,0 +1,11 @@
+CODEOWNERS
+node_modules
+apidoc
+dist
+.vscode
+.idea
+.github
+package-lock.json
+yarn.lock
+.env
+yarn-error.log

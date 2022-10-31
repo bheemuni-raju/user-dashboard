@@ -1,0 +1,48 @@
+name: dev-cient-code-deploy-to-vercel
+on: 
+  push:
+    branches:
+      - development
+    paths:
+      - client/**
+      
+jobs:
+  #build:
+    #runs-on: ubuntu-latest
+    #steps:
+     # - uses: actions/checkout@v2 
+     # - uses: actions/setup-node@v2
+     #   with:
+     #     node-version: '14.x'
+     # - run: npm install
+     # - run: npm run build 
+  
+  deploy:
+    #needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: amondnet/vercel-action@v20
+        id: vercel-deployment
+        with:
+          #github-token: ${{ secrets.GH_TOKEN }}
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
+          vercel-project-name: 'microservices-ums'
+    outputs:
+      preview-url: ${{ steps.vercel-deployment.outputs.preview-url }}
+      
+  lighthouse:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run Lighthouse on urls and validate with lighthouserc
+        uses: treosh/lighthouse-ci-action@v7
+        with:
+          urls: |
+            https://dev-users.byjusorders.com/
+            https://uat-users.byjusorders.com/
+          budgetPath: ./budget.json
+          runs: 3  

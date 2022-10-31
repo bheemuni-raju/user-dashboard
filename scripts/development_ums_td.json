@@ -1,0 +1,30 @@
+{
+        "family": "development-ums-td",
+        "networkMode": "bridge",
+        "cpu": "1024", 
+        "memory": "1024",       
+        "containerDefinitions": [
+            {
+                "image": "644062857332.dkr.ecr.ap-south-1.amazonaws.com/microservices-ums-image:latest",
+                "name": "development-ums-container",
+                "cpu": 0,
+                "memory": 1024,
+                "memoryReservation": 1024,                
+                "portMappings": [
+                    {
+                        "hostPort": 0,
+                        "protocol": "tcp",
+                        "containerPort": 9005
+                    }
+                ],
+                "logConfiguration": {
+                    "logDriver": "awslogs",
+                    "options": {
+                      "awslogs-group": "/nucleus/microservices-ums",
+                      "awslogs-region": "ap-south-1",
+                      "awslogs-stream-prefix": "ums"
+                    }
+                }                  
+            }
+        ]
+}

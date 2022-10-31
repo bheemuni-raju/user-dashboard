@@ -1,0 +1,87 @@
+.sidebar {
+    background: transparent;
+}
+
+.sidebar .nav {
+    width: 200px;
+    flex: 1 1 auto;
+    min-height: 1px;
+    padding: 0.1rem;
+}
+
+.sidebar .nav-link:hover {
+    color: #000;
+    background: #e3eaef;
+}
+
+.sidebar .nav-dropdown-toggle .badge {
+    margin-right: 16px;
+    visibility: hidden;
+}
+
+.sidebar .nav-link{
+    color:black;
+}
+
+.sidebar .nav-dropdown.open {
+    background: transparent;
+}
+
+.nav-dropdown-items {
+    max-height: 1500px;
+    background: transparent;
+}
+
+.sidebar .nav-dropdown.open .nav-link {
+    color:black;
+}
+
+.sidebar .nav-dropdown.open .nav-dropdown-toggle {
+    color: black;
+    background: transparent !important;
+}
+
+.sidebar .nav-link .nav-icon {
+    display: inline-block;
+    width: 1.09375rem;
+    margin: 0 0.5rem 0 0;
+    font-size: 0.875rem;
+    color: black;
+    text-align: center;
+}
+
+.sidebar .nav-link:hover .nav-icon {
+    color: black;
+}
+
+.sidebar .nav-dropdown-toggle {
+    position: relative;
+    color: black;
+}
+
+.sidebar .nav-link.active {
+    color: black;
+    background: #e3eaef;
+}
+
+.sidebar .nav-link.active .nav-icon {
+    color: black;
+    background: #e3eaef;
+}
+
+.sidebar .sidebar-nav {
+    position: relative;
+    flex: 1 1;
+    width: 200px;
+}
+
+.sidebar .nav-dropdown.open .nav-link:hover {
+      color: black;
+      background: #e3eaef;
+}
+
+.sidebar .nav-dropdown.open .nav-dropdown-toggle {
+    color: black;
+    background: transparent !important;
+}
+

@@ -1,0 +1,90 @@
+.main{
+    bottom: 0;
+    display: inline-block;
+    left: 65px;
+    position: relative;
+    right: 0;
+    width: calc(100% - 65px);
+}
+
+.header-fixed .app-body {
+    margin-top: 0px;
+}
+
+.app-body .navbar-primary div.navbar-logo {
+    margin: 15px -5px 25px -5px;
+    // margin: 12px -1rem 10px -1rem;
+    padding: 0;
+    text-align: center;
+}
+
+.app-body .navbar-primary-list .navbar-primary-item {
+    clear: both;
+    display: block;
+    float: none;
+    margin-left: 0;
+    padding: 10px 0;
+    text-align: center;
+}
+.app-body .navbar-primary-list .navbar-primary-item .navbar-primary-item-link, 
+.app-body .navbar-primary-list .navbar-primary-item .navbar-primary-item-link:focus {
+    background: 0 0;
+    border-radius: 3px;
+}
+
+.app-body .navbar-primary-list i {
+    font-size: 25px;
+    color: #e6dede;
+}
+
+.app-body .main {
+    flex: none;
+    min-width: 0;
+}
+
+.app-body .navbar-primary-list .navbar-primary-item-icon {
+    display: inline-block;
+    margin: 0 auto;
+    opacity: .6;
+    padding: 0;
+    -webkit-transition: .3s ease-in;
+    -o-transition: .3s ease-in;
+    transition: .3s ease-in;
+    transition: all .25s cubic-bezier(0,0,0,1);
+}
+
+.app-body .navbar-primary-list .navbar-primary-item .navbar-primary-item-link.active {
+    background: $purple;
+    border-radius: 3px;
+}
+
+.app-body .navbar-primary-list .navbar-primary-item-link {
+    display: inline-block;
+    height: 35px;
+    padding: 7px 0 0;
+    width: 35px;
+}
+
+
+.app-body .navbar-primary{
+    position: fixed;
+}
+
+.app-body .navbar-primary {
+    border: 0;
+    left: 0;
+    width: 65px;
+    z-index: 900;
+}
+
+.app-body .navbar-primary{
+    display: inline-block;
+    height: 100%;
+    max-height: 100%;
+}
+
+.app-body .navbar-default {
+    background-color: $teal;
+    background-image: none;
+    border-color: rgba(9,30,66,.12);
+}

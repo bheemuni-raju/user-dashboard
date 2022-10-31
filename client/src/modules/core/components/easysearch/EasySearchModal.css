@@ -1,0 +1,6 @@
+.range-dash::after {
+    content: "-";
+    position: absolute;
+    left: 99%;
+    top: 6px;
+}

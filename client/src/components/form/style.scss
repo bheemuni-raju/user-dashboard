@@ -1,0 +1,53 @@
+/**Class to add a border across form**/
+.form-border{
+    border: 1px solid #6d6b6b;
+    padding: 2% !important;
+    margin: 2% !important;
+}
+
+.ant-form-item label {
+    display: inline;
+    font-weight: 450 !important;
+    color: rgba(58, 56, 56, 0.85) !important;
+}
+
+form .ant-input-group .ant-select, form .ant-input-group .ant-cascader-picker {
+    width: 100% !important;
+}
+
+.ant-form-item-label {
+    display: inline-block;
+    overflow: wrap;
+    line-height: 39.9999px;
+    white-space: nowrap;
+    text-align: left!important;
+    vertical-align: middle;
+}
+
+.ant-form-item {
+    padding-bottom: 0px !important;
+}
+
+/**
+    React date picker
+**/
+
+.react-datepicker-wrapper {
+    width: 100% !important;
+}
+  
+.react-datepicker__input-container {
+    width: 100% !important;
+}
+
+.password_setup {
+    display: inline-block;
+}
+
+.password-button {
+    position: absolute;
+    margin-left: 680px;
+    margin-top: -48px;
+    border: none;
+    background: none;
+}

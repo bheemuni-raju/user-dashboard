@@ -1,0 +1,23 @@
+.page{
+  background: #fff;
+  padding: 10px;
+}
+
+.page-header .separator {
+  border-left: 1px solid green !important;
+  width: 1px !important;
+  height: 15px !important;
+  display: inline-block !important;
+  padding: 0px !important;
+  list-style: none !important;
+  position: relative;
+  top: 3px;
+}
+
+.page-header h4{
+  display: inline;
+}
+
+.page-header{
+  padding: 10px;
+}

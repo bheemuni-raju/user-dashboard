@@ -1,0 +1,46 @@
+name: SAST Scan [NodeJsScan]
+
+on:
+  release:
+    types: [ published, edited ]
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  SECURITY_EMITTER_TOKEN: ${{ secrets.SECURITY_EMITTER_TOKEN }}
+
+jobs:
+  Scan:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Emit Checkout Security Event
+        run: |
+          pip3 install -U pip setuptools
+          pip3 install requests
+          python3 .github/workflows/security_event_emitter.py SAST checkout $GITHUB_REPOSITORY
+
+
+      - name: Installing NodeJsScan and Dependencies
+        run: |
+          pip3 install -U attrs
+          pip3 install njsscan awscli
+          echo "/home/runner/.local/bin/" >> $GITHUB_PATH
+          python3 .github/workflows/security_event_emitter.py SAST install $GITHUB_REPOSITORY
+
+          
+      - name: Run scan with NodeJsScan
+        run: |
+          set +o pipefail
+          njsscan --json --output sast-scan-report.json ./ || true
+          echo "file_exists=`ls | grep sast-scan-report`" >> $GITHUB_ENV
+          python3 .github/workflows/security_event_emitter.py SAST scan $GITHUB_REPOSITORY
+
+          
+      - name: Upload Report to S3
+        if: ${{ env.file_exists == 'sast-scan-report.json' }}
+        run: |
+          aws s3 cp sast-scan-report.json s3://github-action-sast-sca-reports-el99oac83qci3/$GITHUB_REPOSITORY/SAST_REPORTS/`date +'%d-%b-%YT%H-%M-%S'`.json
+          python3 .github/workflows/security_event_emitter.py SAST upload $GITHUB_REPOSITORY

@@ -1,0 +1,36 @@
+.column-selection ul.available-column-list, 
+.column-selection ul.selected-columns {
+    height: 360px;
+    overflow-y: auto;
+    border: 1px solid #dadada;
+    padding: 10px;
+}
+
+.column-selection ul.available-column-list li, 
+.column-selection ul.selected-columns li {
+    padding: 5px 15px;
+    cursor: move;
+}
+
+.workflow-condition {
+    width: 90%;
+}
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+.btn-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.customview-edit{   
+    display: none; 
+    margin-left: 5px;
+}
+
+.grid-toolbar:hover .customview-edit{
+  display: inline-block;
+}

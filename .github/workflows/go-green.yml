@@ -1,0 +1,70 @@
+name: go green
+
+on:
+  pull_request:
+    branches: [development]
+    types: [opened, synchronize]
+
+env:
+  AWS_REGION: ap-south-1
+
+jobs:
+  conventional-commit-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+
+      - run: rm commitlint.config.js
+
+      - uses: wagoid/commitlint-github-action@v4
+        env:
+          NODE_PATH: ${{ github.workspace }}/node_modules
+
+  # eslint-check:
+  #   # needs: conventional-commit-check
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: "Checkout"
+  #       uses: actions/checkout@v2
+  #       with:
+  #         fetch-depth: 0
+
+  #     - name: "Setup node environment"
+  #       uses: actions/setup-node@v2
+  #       with:
+  #         node-version: "14"
+
+  #     - name: Configure aws credentials
+  #       uses: aws-actions/configure-aws-credentials@v1
+  #       with:
+  #         aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY }}
+  #         aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_KEY }}
+  #         aws-region: ${{ env.AWS_REGION }}
+
+  #     - name: Get parameters from aws paramstore
+  #       id: param-store
+  #       run: |
+  #         aws ssm get-parameters --names /development/NPMRC --with-decryption --output text --query "Parameters[*].Value" > ./server/.npmrc
+  #         aws ssm get-parameters --names /development/NPMRC --with-decryption --output text --query "Parameters[*].Value" > ./client/.npmrc
+
+  #     - name: Conventional commit linting
+  #       run: |
+  #         echo "conventional commit linting passed"
+
+  #     - name: Codebase linting
+  #       run: |
+  #         cd ./server
+  #         npm i
+  #         npm run lint:check
+  #         echo "server linting passed"
+  #         cd ../client
+  #         npm i
+  #         npm run lint:check
+  #         echo "client linting passed"

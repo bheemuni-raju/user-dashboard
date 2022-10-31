@@ -1,0 +1,16 @@
+
+// If you want to override variables do it here
+@import "variables";
+
+// Import styles
+@import "@byjus-orders/uikit-react/scss/uikit-default.scss";
+
+@import '~bootstrap/scss/bootstrap';
+
+@import 'compact-sidebar';
+
+// If you want to add something do it here
+@import "custom";
+
+// ie fixes
+//@import "ie-fix";

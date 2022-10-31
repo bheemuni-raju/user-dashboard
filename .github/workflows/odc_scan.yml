@@ -1,0 +1,42 @@
+name: SCA Scan [OWASP Dependency Check]
+
+on:
+  release:
+    types: [ published, edited ]
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  SECURITY_EMITTER_TOKEN: ${{ secrets.SECURITY_EMITTER_TOKEN }}
+
+jobs:
+  Scan:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Emit Checkout Security Event
+        run: |
+          pip3 install -U pip setuptools
+          pip3 install requests
+          python3 .github/workflows/security_event_emitter.py SCA checkout $GITHUB_REPOSITORY
+
+      - name: Set up AWS CLI
+        run: pip3 install awscli
+
+      - name: Installing OWASP Dependency Check
+        run: |
+          wget https://github.com/jeremylong/DependencyCheck/releases/download/v6.0.2/dependency-check-6.0.2-release.zip
+          unzip dependency-check-6.0.2-release.zip
+          python3 .github/workflows/security_event_emitter.py SCA install $GITHUB_REPOSITORY
+
+      - name: Run scan with ODC
+        run: |
+          dependency-check/bin/dependency-check.sh --exclude ./dependency-check/  --format JSON --scan ./
+          python3 .github/workflows/security_event_emitter.py SCA scan $GITHUB_REPOSITORY
+
+      - name: Upload Report to S3
+        run: |
+          aws s3 cp dependency-check-report.json s3://github-action-sast-sca-reports-el99oac83qci3/$GITHUB_REPOSITORY/SCA_REPORTS/`date +'%d-%b-%YT%H-%M-%S'`.json
+          python3 .github/workflows/security_event_emitter.py SCA upload $GITHUB_REPOSITORY

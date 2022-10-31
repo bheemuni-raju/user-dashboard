@@ -1,0 +1,139 @@
+name: prod-server-ums
+on: 
+  push:
+    branches:
+      - master
+    paths:
+      - server/**
+
+env:
+  AWS_REGION: ap-south-1
+  ECR_REPOSITORY: production-microservices-ums-image
+  IMAGE_NAME: production-microservices-ums-image
+  ECS_SERVICE: production-ums-service
+  ECS_CLUSTER: production-locus-ecs-cluster
+  ECS_TASK_DEFINITION: production-microservices-ums-td
+  CONTAINER_NAME: production-ums-container
+  COMMIT: 0
+  TAG: 0
+jobs:
+  semantic_release:
+    name: semantic release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: none 
+      issues: write
+      packages: write
+    environment: master
+    steps:
+      - name: Checkout branch "master"
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+          ref: "master"
+          fetch-depth: 0
+      - name: create a release
+        run: |
+          npm i -g semantic-release
+          npm i -g @semantic-release/changelog
+          npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+
+      - name: push changes to github
+        run: |
+          git config user.name "${{ secrets.GH_ADMIN_USERNAME }}"
+          git config user.email "${{ secrets.GH_ADMIN_EMAIL }}"
+          git remote set-url origin https://${{secrets.GH_ADMIN_USERNAME}}:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY
+          git add .
+          git commit -m"fix: changelog and package.json release[skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }} 
+
+  deployment:
+    if: always()    
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout branch "master"
+        uses: actions/checkout@v2
+        with:
+          ref: "master"
+          fetch-depth: 0
+
+      - name: filter the tag from commits
+        run: |
+          array=(${{join(github.event.commits.*.id, ' ') }})
+          for i in "${array[@]}"
+          do
+            echo "value: ${i}"
+            echo "output: $(git tag --contains ${i})"
+            if [[ "$(git tag --contains ${i})" != "" ]]
+            then
+              echo "COMMIT=${i}" >> $GITHUB_ENV
+            fi
+          done
+
+      - name: Get tag from commit
+        run: |
+          echo "TAG=$(git tag --contains ${{env.COMMIT}} |head -n 1)" >> $GITHUB_ENV
+      - name: tag
+        run: echo ${{env.TAG}}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_SECRET_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: get parameters form param store
+        id: param-store
+        run: |
+          aws ssm get-parameters --names /v2/production/NPMRC --with-decryption --output text --query "Parameters[*].Value" > ./server/.npmrc
+          aws ssm get-parameters-by-path --region ap-south-1 --path /v2/production/microservices-ums --with-decryption |  jq -r '.Parameters[]|((.Name|capture(".*/(?<a>.*)").a+"=")+.Value)' > ./server/envplaceholder
+          cp ./server/envplaceholder ./server/.env
+          cat ./server/.env
+
+      - name: get the image tag
+        id: image
+        run: |
+          if [ "${{env.TAG}}" != "" ]; then
+            echo "::set-output name=imagetag::${{env.TAG}}"
+          else
+            echo "::set-output name=imagetag::$(date +%Y-%m-%d-%H%M%S)"
+          fi
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        run: |
+          echo "image tag name ${{ steps.image.outputs.imagetag }}"
+          docker build -t $IMAGE_NAME:${{ steps.image.outputs.imagetag }} ./server --build-arg NODE_HEAP_MEMORY=8216 --build-arg DD_PROFILING_ENABLED=false
+          docker tag $IMAGE_NAME:${{ steps.image.outputs.imagetag }} 602393328267.dkr.ecr.ap-south-1.amazonaws.com/$IMAGE_NAME:${{ steps.image.outputs.imagetag }}
+          docker push 602393328267.dkr.ecr.ap-south-1.amazonaws.com/$IMAGE_NAME:${{ steps.image.outputs.imagetag }}     
+          echo "::set-output name=image::602393328267.dkr.ecr.ap-south-1.amazonaws.com/$IMAGE_NAME:${{ steps.image.outputs.imagetag }}"
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > app-task-definition.json
+          cat app-task-definition.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: service-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: app-task-definition.json
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.service-task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true

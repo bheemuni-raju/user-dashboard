@@ -1,0 +1,32 @@
+/**
+    Columns colors
+**/
+
+.td-header-info, .td-column-info{
+    color: #000;
+    background: #b3e5fc !important;
+}
+
+.td-header-secondary, .td-column-secondary{
+    color: #000;
+    background: #80deea !important;
+}
+
+.td-header-warning, .td-column-warning{
+    color: #000;
+    background: #ffcc80 !important;
+}
+
+.td-header-success, .td-column-success{
+    color: #000;
+    background: #80cbc4 !important;
+}
+
+.td-header-danger, .td-column-danger{
+    color: #fff;
+    background: #ef5350 !important;
+}
+
+.bg-highlight {
+   background: #a9e7ef;
+}

@@ -1,0 +1,18 @@
+.app-dropdown-icon-item {
+    border-radius: 3px;
+    line-height: 34px;
+    text-align: center;
+    padding: 15px 0 9px;
+    display: block;
+    border: 1px solid transparent;
+    color: #6c757d;
+}
+
+.app-dropdown-icon-item>img {
+    height: 35px;
+}
+
+.app-dropdown-icon-item:hover {
+    background-color: #f8f9fa;
+    color: #272e37;
+}
